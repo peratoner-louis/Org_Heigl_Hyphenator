@@ -1,39 +1,48 @@
 name: Build
 on: [push]
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   check:
+    name: Run CodeStyle checks
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #7.0.1
         with:
-          php-version: "8.3"
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: "8.5"
           tools: phive
       - name: Download codesniffer
-        run: phive --no-progress install --trust-gpg-keys 31C7E470E2138192,5E6DDE998AB73B8E phpcs
+        run: phive --no-progress install --trust-gpg-keys 31C7E470E2138192,5E6DDE998AB73B8E,97B02DD8E5071466 phpcs
       - name: check
         run: ./tools/phpcs
   test:
+    name: Test with PHP ${{ matrix.php-versions }}
     needs: check
     runs-on: ubuntu-latest # ${{ matrix.operating-system }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         # operating-system: [ubuntu-latest, windows-latest, macos-latest]
-        php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
         experimental: [false]
         include:
-          - php-versions: '8.4'
+          - php-versions: '8.6'
             experimental: true
-    name: PHP ${{ matrix.php-versions }} # Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #7.0.1
+        with:
+          persist-credentials: false
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: sodium
@@ -44,14 +53,17 @@ jobs:
       - name: test
         run: composer test
   analyze:
+    name: Static analysis
     needs: test
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+        with:
+          persist-credentials: false
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
         with:
           php-version: "8.3"
           tools: phive
@@ -62,17 +74,20 @@ jobs:
       - name: analyze
         run: ./tools/psalm
   coverage:
+    name: Code-Coverage
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #7.0.1
         with:
-          php-version: "8.3"
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+        with:
+          php-version: "8.5"
           coverage: xdebug
       - name: Install
         run: composer update
