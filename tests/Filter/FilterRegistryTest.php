@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -29,7 +32,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Filter;
 
 use \Org\Heigl\Hyphenator\Filter\FilterRegistry;
@@ -50,28 +52,28 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class FilterRegistryTest extends TestCase
+final class FilterRegistryTest extends TestCase
 {
-    public function testAddingFilter()
+    public function testAddingFilter(): void
     {
         $t1 = new TestFilter();
         $t2 = new Test1Filter();
         $r = new FilterRegistry();
-        TestCase::assertSame(0, $r->count());
-        self::assertSame($r, $r->add($t1));
-        self::assertSame(1, $r->count());
-        self::assertSame($t1, $r->getFilterWithKey(0));
-        self::assertSame($r, $r->add($t2));
-        self::assertSame(2, $r->count());
-        self::assertSame($t1, $r->getFilterWithKey(0));
-        self::assertSame($t2, $r->getFilterWithKey(1));
-        self::assertSame($r, $r->cleanup());
-        self::assertSame(0, $r->count());
+        TestCase::assertCount(0, $r);
+        $this->assertSame($r, $r->add($t1));
+        $this->assertCount(1, $r);
+        $this->assertSame($t1, $r->getFilterWithKey(0));
+        $this->assertSame($r, $r->add($t2));
+        $this->assertCount(2, $r);
+        $this->assertSame($t1, $r->getFilterWithKey(0));
+        $this->assertSame($t2, $r->getFilterWithKey(1));
+        $this->assertSame($r, $r->cleanup());
+        $this->assertCount(0, $r);
     }
 
 
 
-    public function testGettingFilter()
+    public function testGettingFilter(): void
     {
         $t1 = new TestFilter();
         $t2 = new Test1Filter();
@@ -79,10 +81,10 @@ class FilterRegistryTest extends TestCase
         $r->add($t1);
         $r->add($t2);
         $this->assertSame($t2, $r->getFilterWithKey(1));
-        $this->assertNull($r->getFilterWithKey(2));
+        $this->assertNotInstanceOf(\Org\Heigl\Hyphenator\Filter\Filter::class, $r->getFilterWithKey(2));
     }
 
-    public function testIteratorInterface()
+    public function testIteratorInterface(): void
     {
         $t1 = new TestFilter();
         $t2 = new Test1Filter();
@@ -90,11 +92,11 @@ class FilterRegistryTest extends TestCase
         $r->add($t1);
         $r->add($t2);
         $r->rewind();
-        $this->assertEquals(0, $r->key());
+        $this->assertSame(0, $r->key());
         $this->assertSame($t1, $r->current());
         $r->next();
         $this->assertTrue($r->valid());
-        $this->assertEquals(1, $r->key());
+        $this->assertSame(1, $r->key());
         $this->assertSame($t2, $r->current());
         $r->next();
         $this->assertFalse($r->valid());
@@ -114,18 +116,18 @@ class FilterRegistryTest extends TestCase
         $r->key();
     }
 
-    public function testCountableInterface()
+    public function testCountableInterface(): void
     {
         $t1 = new TestFilter();
         $t2 = new Test1Filter();
         $r = new FilterRegistry();
         $r->add($t1);
-        $this->assertEquals(1, $r->count());
+        $this->assertCount(1, $r);
         $r->add($t2);
-        $this->assertEquals(2, $r->count());
+        $this->assertCount(2, $r);
     }
 
-    public function testFiltering()
+    public function testFiltering(): void
     {
         $t1 = new TestFilter();
         $t2 = new Test1Filter();

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,7 +31,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Tokenizer\TokenizerRegistry;
@@ -49,24 +51,24 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class TokenRegistryTest extends TestCase
+final class TokenRegistryTest extends TestCase
 {
-    public function testAddingToken()
+    public function testAddingToken(): void
     {
         $t = new WordToken('a');
         $t1 = new WordToken('a');
         $r = new TokenRegistry();
-        self::assertEquals(0, $r->count());
+        $this->assertCount(0, $r);
         $this->assertSame($r, $r->add($t));
-        self::assertEquals(1, $r->count());
-        self::assertSame($t, $r->getTokenWithKey(0));
+        $this->assertCount(1, $r);
+        $this->assertSame($t, $r->getTokenWithKey(0));
         $this->assertSame($r, $r->add($t1));
-        self::assertEquals(2, $r->count());
-        self::assertSame($t, $r->getTokenWithKey(0));
-        self::assertSame($t1, $r->getTokenWithKey(1));
+        $this->assertCount(2, $r);
+        $this->assertSame($t, $r->getTokenWithKey(0));
+        $this->assertSame($t1, $r->getTokenWithKey(1));
     }
 
-    public function testGettingToken()
+    public function testGettingToken(): void
     {
         $t1 = new WordToken('a');
         $t2 = new WordToken('b');
@@ -74,10 +76,10 @@ class TokenRegistryTest extends TestCase
         $r->add($t1);
         $r->add($t2);
         $this->assertSame($t2, $r->getTokenWithKey(1));
-        $this->assertNull($r->getTokenWithKey(2));
+        $this->assertNotInstanceOf(\Org\Heigl\Hyphenator\Tokenizer\Token::class, $r->getTokenWithKey(2));
     }
 
-    public function testIteratorInterface()
+    public function testIteratorInterface(): void
     {
         $t1 = new WordToken('a');
         $t2 = new WordToken('b');
@@ -85,11 +87,11 @@ class TokenRegistryTest extends TestCase
         $r->add($t1);
         $r->add($t2);
         $r->rewind();
-        $this->assertEquals(0, $r->key());
+        $this->assertSame(0, $r->key());
         $this->assertSame($t1, $r->current());
         $r->next();
         $this->assertTrue($r->valid());
-        $this->assertEquals(1, $r->key());
+        $this->assertSame(1, $r->key());
         $this->assertSame($t2, $r->current());
         $r->next();
         $this->assertFalse($r->valid());
@@ -109,18 +111,18 @@ class TokenRegistryTest extends TestCase
         $r->key();
     }
 
-    public function testCountableInterface()
+    public function testCountableInterface(): void
     {
         $t1 = new WordToken('a');
         $t2 = new WordToken('b');
         $r = new TokenRegistry();
         $r->add($t1);
-        $this->assertEquals(1, $r->count());
+        $this->assertCount(1, $r);
         $r->add($t2);
-        $this->assertEquals(2, $r->count());
+        $this->assertCount(2, $r);
     }
 
-    public function testReplacement()
+    public function testReplacement(): void
     {
         new Token('f');
         $wt1 = new WordToken('a');
@@ -132,20 +134,20 @@ class TokenRegistryTest extends TestCase
         $r->add($wt1);
         $r->add($wt2);
         $r->add($wt3);
-        self::assertEquals(3, $r->count());
-        self::assertSame($wt1, $r->getTokenWithKey(0));
-        self::assertSame($wt2, $r->getTokenWithKey(1));
-        self::assertSame($wt3, $r->getTokenWithKey(2));
+        $this->assertCount(3, $r);
+        $this->assertSame($wt1, $r->getTokenWithKey(0));
+        $this->assertSame($wt2, $r->getTokenWithKey(1));
+        $this->assertSame($wt3, $r->getTokenWithKey(2));
         $r->replace($wt4, array());
-        self::assertEquals(3, $r->count());
-        self::assertSame($wt1, $r->getTokenWithKey(0));
-        self::assertSame($wt2, $r->getTokenWithKey(1));
-        self::assertSame($wt3, $r->getTokenWithKey(2));
+        $this->assertCount(3, $r);
+        $this->assertSame($wt1, $r->getTokenWithKey(0));
+        $this->assertSame($wt2, $r->getTokenWithKey(1));
+        $this->assertSame($wt3, $r->getTokenWithKey(2));
         $r->replace($wt2, array( $wt4, 'foo', $wt5));
-        self::assertEquals(4, $r->count());
-        self::assertSame($wt1, $r->getTokenWithKey(0));
-        self::assertSame($wt4, $r->getTokenWithKey(1));
-        self::assertSame($wt5, $r->getTokenWithKey(2));
-        self::assertSame($wt3, $r->getTokenWithKey(3));
+        $this->assertCount(4, $r);
+        $this->assertSame($wt1, $r->getTokenWithKey(0));
+        $this->assertSame($wt4, $r->getTokenWithKey(1));
+        $this->assertSame($wt5, $r->getTokenWithKey(2));
+        $this->assertSame($wt3, $r->getTokenWithKey(3));
     }
 }

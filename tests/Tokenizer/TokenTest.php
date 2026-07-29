@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,7 +31,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Tokenizer\Token;
@@ -48,9 +50,9 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class TokenTest extends TestCase
+final class TokenTest extends TestCase
 {
-    public function testTokenReturnsCorrectClass()
+    public function testTokenReturnsCorrectClass(): void
     {
         new Token('test');
         $tokenA = new WordToken('a');
@@ -61,12 +63,12 @@ class TokenTest extends TestCase
         $this->assertEquals('Org\Heigl\Hyphenator\Tokenizer\WhitespaceToken', $tokenC->getType());
     }
 
-    public function testTokenReturnsCorrectValues()
+    public function testTokenReturnsCorrectValues(): void
     {
         $tokenA = new Token('test');
 
-        self::assertEquals('test', $tokenA->get());
-        self::assertEquals(['test'], $tokenA->getHyphenatedContent());
+        $this->assertEquals('test', $tokenA->get());
+        $this->assertEquals(['test'], $tokenA->getHyphenatedContent());
 
         $tokenA->setHyphenatedContent(array('a','B'));
         $this->assertEquals(['a','B'], $tokenA->getHyphenatedContent());
@@ -75,26 +77,23 @@ class TokenTest extends TestCase
     /**
      * @dataProvider tokenLengthProvider
      */
-    public function testTokenLength($string, $length)
+    public function testTokenLength($string, $length): void
     {
         $t = new Token($string);
         $this->assertEquals($length, $t->length());
     }
 
-    public function tokenLengthProvider()
+    public static function tokenLengthProvider(): \Iterator
     {
-        return array(
-            array('test', 4),
-            array('täßt', 4),
-            array('täßtärø¥', 8),
-
-        );
+        yield array('test', 4);
+        yield array('täßt', 4);
+        yield array('täßtärø¥', 8);
     }
 
     /**
      * @dataProvider filteredContentProvider
      */
-    public function testFilteredContent($value, $expected)
+    public function testFilteredContent($value, $expected): void
     {
         $t = new Token($value);
         $this->assertEquals($expected, $t->getFilteredContent());
@@ -102,10 +101,8 @@ class TokenTest extends TestCase
         $this->assertEquals('test', $t->getFilteredContent());
     }
 
-    public function filteredContentProvider()
+    public static function filteredContentProvider(): \Iterator
     {
-        return array(
-            array('test','test'),
-        );
+        yield array('test','test');
     }
 }

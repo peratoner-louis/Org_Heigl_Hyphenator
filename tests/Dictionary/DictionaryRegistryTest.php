@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,15 +31,14 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Dictionary;
 
 use Countable;
 use Iterator;
 use Org\Heigl\Hyphenator\Dictionary\Dictionary;
 use Org\Heigl\Hyphenator\Dictionary\DictionaryRegistry;
-use Org\Heigl\Hyphenator\Tokenizer\TokenizerRegistry;
 use OutOfBoundsException;
+use PHPUnit\FRamework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,20 +52,20 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class DictionaryRegistryTest extends TestCase
+final class DictionaryRegistryTest extends TestCase
 {
-    public function testAddingDictionary()
+    public function testAddingDictionary(): void
     {
         $registry = new DictionaryRegistry();
-        TestCase::assertSame(0, $registry->count());
+        TestCase::assertCount(0, $registry);
         $dict = new Dictionary();
         $registry->add($dict);
-        TestCase::assertSame(1, $registry->count());
+        TestCase::assertCount(1, $registry);
         TestCase::assertSame($dict, $registry->getDictionaryWithKey(0));
         $this->assertSame($dict, $registry->getDictionaryWithKey(0));
     }
 
-    public function testGettingPatternsForWord()
+    public function testGettingPatternsForWord(): void
     {
         $registry = new DictionaryRegistry();
         $dict1 = new Dictionary();
@@ -80,26 +82,26 @@ class DictionaryRegistryTest extends TestCase
         $this->assertEquals($expected, $registry->getHyphenationPatterns('test'));
     }
 
-    public function testRegistryImplementsItterator()
+    public function testRegistryImplementsItterator(): void
     {
         $registry = new DictionaryRegistry();
         $this->assertInstanceof(Iterator::class, $registry);
         $this->assertInstanceof(Countable::class, $registry);
     }
 
-    public function testIteratorAndCountable()
+    public function testIteratorAndCountable(): void
     {
         $registry = new DictionaryRegistry();
         $registry->add(new Dictionary())
                  ->add(new Dictionary());
-        $this->assertEquals(1, $registry->count());
+        $this->assertCount(1, $registry);
         $dictionary = new Dictionary();
         $dictionary->addPattern('test', 'test1');
         $registry->add($dictionary);
-        $this->assertEquals(2, $registry->count());
+        $this->assertCount(2, $registry);
         $registry->rewind();
         $this->assertEquals(new Dictionary(), $registry->current());
-        $this->assertEquals(0, $registry->key());
+        $this->assertSame(0, $registry->key());
         $registry->next();
         $this->assertTrue($registry->valid());
         $registry->next();
@@ -120,7 +122,7 @@ class DictionaryRegistryTest extends TestCase
         $r->key();
     }
 
-    public function testGettingDictionaryById()
+    public function testGettingDictionaryById(): void
     {
         $registry = new DictionaryRegistry();
         $dictionary1 = new Dictionary();

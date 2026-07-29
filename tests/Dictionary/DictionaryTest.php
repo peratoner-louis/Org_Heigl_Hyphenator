@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,7 +31,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Dictionary;
 
 use Org\Heigl\Hyphenator\Dictionary\Dictionary;
@@ -46,9 +48,9 @@ use ReflectionClass;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class DictionaryTest extends TestCase
+final class DictionaryTest extends TestCase
 {
-    public function testSettingDefaultFilePath()
+    public function testSettingDefaultFilePath(): void
     {
         $rc = new ReflectionClass(Dictionary::class);
         $rp = $rc->getProperty('fileLocation');
@@ -58,7 +60,7 @@ class DictionaryTest extends TestCase
         TestCase::assertSame('foo', $rp->getValue());
     }
 
-    public function testParsingOnDictionaryCreationDoesNotWorks()
+    public function testParsingOnDictionaryCreationDoesNotWorks(): void
     {
         Dictionary::setFileLocation(__DIR__ . '/share/');
         @unlink(__DIR__.'/share/de.ini');
@@ -66,7 +68,7 @@ class DictionaryTest extends TestCase
         $this->assertFalse(file_Exists(__DIR__ . '/share/de.ini'));
     }
 
-    public function testParsingWrongLocaleWorks()
+    public function testParsingWrongLocaleWorks(): void
     {
         Dictionary::setFileLocation(__DIR__ . '/../share/test3/files/dictionaries');
         $dict = Dictionary::factory('de-de');
@@ -78,7 +80,7 @@ class DictionaryTest extends TestCase
         TestCase::assertNotSame([], $rp->getValue($dict));
     }
 
-    public function testGettingPatterns()
+    public function testGettingPatterns(): void
     {
         Dictionary::setFileLocation(__DIR__ . '/share/');
         $dict = Dictionary::factory('de-DE');
@@ -86,7 +88,7 @@ class DictionaryTest extends TestCase
         $this->assertEquals(array('täßt'=>'00020'), $result);
     }
 
-    public function testSettingPatterns()
+    public function testSettingPatterns(): void
     {
         $rc = new ReflectionClass(Dictionary::class);
         $rp = $rc->getProperty('dictionary');
@@ -97,7 +99,7 @@ class DictionaryTest extends TestCase
         TestCase::assertSame(['test' => '01234'], $rp->getValue($dictionary));
     }
 
-    public function testCreationOfNotExistentLocale()
+    public function testCreationOfNotExistentLocale(): void
     {
         $rc = new ReflectionClass(Dictionary::class);
         $rp = $rc->getProperty('dictionary');
@@ -110,13 +112,13 @@ class DictionaryTest extends TestCase
         $this->assertEquals(array(), $result);
     }
 
-    public function testParsingDicFilesWorks()
+    public function testParsingDicFilesWorks(): void
     {
         Dictionary::setFileLocation(__DIR__ . '/share/');
         @unlink(__DIR__.'/share/de_TE.ini');
         $dict = Dictionary::parseFile('de_TE');
         $this->assertTrue(file_Exists($dict));
-        $this->assertTrue('UTF-8' == mb_detect_encoding(file_get_contents($dict)));
+        $this->assertEquals('UTF-8', mb_detect_encoding(file_get_contents($dict)));
         $this->assertEquals(file_get_contents(__DIR__.'/share/de_TE.default.ini'), file_get_contents($dict));
         try {
             $dict = Dictionary::parseFile('foobar');
@@ -132,7 +134,7 @@ class DictionaryTest extends TestCase
      * @param $parameter
      * @param $expected
      */
-    public function testLocaleUnification($parameter, $expected)
+    public function testLocaleUnification($parameter, $expected): void
     {
         $obj = new \Org\Heigl\Hyphenator\Dictionary\Dictionary();
         $method = \UnitTestHelper::getMethod($obj, 'unifyLocale');
@@ -141,15 +143,13 @@ class DictionaryTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function localeUnificationProvider()
+    public static function localeUnificationProvider(): \Iterator
     {
-        return array(
-            array('de', 'de'),
-            array('DE', 'de'),
-            array('de de', 'de_DE'),
-            array('fo_BA', 'fo_BA'),
-            array('DE,de', 'de_DE'),
-            array('fooBar', 'fooBar'),
-        );
+        yield array('de', 'de');
+        yield array('DE', 'de');
+        yield array('de de', 'de_DE');
+        yield array('fo_BA', 'fo_BA');
+        yield array('DE,de', 'de_DE');
+        yield array('fooBar', 'fooBar');
     }
 }

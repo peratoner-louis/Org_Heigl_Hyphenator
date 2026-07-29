@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -29,11 +32,10 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest;
 
 use Org\Heigl\Hyphenator\Options;
-use Mockery as M;
+use Org\Heigl\Hyphenator\Tokenizer\TokenRegistry;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 
@@ -48,9 +50,9 @@ use UnexpectedValueException;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class OptionsTest extends TestCase
+final class OptionsTest extends TestCase
 {
-    public function testSettingHyphen()
+    public function testSettingHyphen(): void
     {
         $o = new Options();
         $this->assertEquals(chr(173), $o->getHyphen());
@@ -58,7 +60,7 @@ class OptionsTest extends TestCase
         $this->assertEquals('test', $o->getHyphen());
     }
 
-    public function testSettingNoHyphenateString()
+    public function testSettingNoHyphenateString(): void
     {
         $o = new Options();
         $this->assertEquals('', $o->getNoHyphenateString());
@@ -66,7 +68,7 @@ class OptionsTest extends TestCase
         $this->assertEquals('test', $o->getNoHyphenateString());
     }
 
-    public function testSettingLeftMin()
+    public function testSettingLeftMin(): void
     {
         $o = new Options();
         $this->assertSame(2, $o->getLeftMin());
@@ -76,7 +78,7 @@ class OptionsTest extends TestCase
         $this->assertSame(5, $o->getLeftMin());
     }
 
-    public function testSettingRightMin()
+    public function testSettingRightMin(): void
     {
         $o = new Options();
         $this->assertSame(2, $o->getRightMin());
@@ -87,7 +89,7 @@ class OptionsTest extends TestCase
     }
 
 
-    public function testSettingMinWordSize()
+    public function testSettingMinWordSize(): void
     {
         $o = new Options();
         $this->assertSame(6, $o->getMinWordLength());
@@ -97,7 +99,7 @@ class OptionsTest extends TestCase
         $this->assertSame(PHP_INT_MAX, $o->getMinWordLength());
     }
 
-    public function testSettingCustomHyphen()
+    public function testSettingCustomHyphen(): void
     {
         $o = new Options;
         $this->assertEquals('--', $o->getCustomHyphen());
@@ -105,7 +107,7 @@ class OptionsTest extends TestCase
         $this->assertEquals('++', $o->getCustomHyphen());
     }
 
-    public function testSettingFilters()
+    public function testSettingFilters(): void
     {
         $o = new Options();
         $this->assertSame([], $o->getFilters());
@@ -119,11 +121,21 @@ class OptionsTest extends TestCase
         $this->assertSame(['filterC','filterD'], $o->getFilters());
     }
 
-    public function testSettingFilterInstance()
+    public function testSettingFilterInstance(): void
     {
         $o = new Options();
 
-        $filter = M::mock('Org\Heigl\Hyphenator\Filter\Filter');
+        $filter = new class extends \Org\Heigl\Hyphenator\Filter\Filter {
+            public function run(TokenRegistry $tokens)
+            {
+                // Do nothing
+            }
+
+            protected function doConcatenate(TokenRegistry $tokens)
+            {
+                // do nothing
+            }
+        };
 
         $this->assertSame([], $o->getFilters());
         $this->assertSame($o, $o->addFilter($filter));
@@ -131,29 +143,33 @@ class OptionsTest extends TestCase
     }
 
     /**
-     * @dataProvider settingSoemthingElseThanFilterFailsProvider
+     * @dataProvider settingSomethingElseThanFilterFailsProvider
      */
-    public function testSettingSoemthingElseThanFilterFails($filter)
+    public function testSettingSomethingElseThanFilterFails($filter): void
     {
-        self::expectException(UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $o = new Options();
 
         $o->addFilter($filter);
     }
 
-    public function settingSoemthingElseThanFilterFailsProvider()
+    public static function settingSomethingElseThanFilterFailsProvider(): \Iterator
     {
-        return array(
-            array(M::mock('Org\Heigl\Hyphenator\Tokenizer\Tokenizer')),
-            array(new \Exception()),
-        );
+        yield array(new \stdClass());
+        yield array(new \Exception());
     }
 
-    public function testSettingTokenizerInstance()
+    public function testSettingTokenizerInstance(): void
     {
         $o = new Options();
 
-        $tokenizer = M::mock('Org\Heigl\Hyphenator\Tokenizer\Tokenizer');
+        $tokenizer = new class implements \Org\Heigl\Hyphenator\Tokenizer\Tokenizer {
+
+            public function run($input)
+            {
+                // Do nothing
+            }
+        };
 
         $this->assertSame([], $o->getTokenizers());
         $this->assertSame($o, $o->addTokenizer($tokenizer));
@@ -162,24 +178,22 @@ class OptionsTest extends TestCase
     /**
      * @dataProvider settingSoemthingElseThanTokenizerFailsProvider
      */
-    public function testSettingSoemthingElseThanTokenizerFails($tokenizer)
+    public function testSettingSoemthingElseThanTokenizerFails($tokenizer): void
     {
-        self::expectException(UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $o = new Options();
 
         $o->addTokenizer($tokenizer);
     }
 
-    public function settingSoemthingElseThanTokenizerFailsProvider()
+    public static function settingSoemthingElseThanTokenizerFailsProvider(): \Iterator
     {
-        return array(
-            array(M::mock('Org\Heigl\Hyphenator\Filter\Filter')),
-            array(new \Exception()),
-        );
+        yield array(new \stdClass());
+        yield array(new \Exception());
     }
 
 
-    public function testSettingTokenizers()
+    public function testSettingTokenizers(): void
     {
         $o = new Options();
         $this->assertSame(array(), $o->getTokenizers());
@@ -193,7 +207,7 @@ class OptionsTest extends TestCase
         $this->assertSame(array('filterC','filterD'), $o->getTokenizers());
     }
 
-    public function testCreatingOptionViaFactory()
+    public function testCreatingOptionViaFactory(): void
     {
         try {
             Options::factory('foo');
@@ -211,19 +225,19 @@ class OptionsTest extends TestCase
         $this->assertInstanceof('\Org\Heigl\Hyphenator\Options', $o);
         $o = Options::factory(__DIR__ . '/share/parseable.ini');
         $this->assertInstanceof('\Org\Heigl\Hyphenator\Options', $o);
-        self::assertSame('test', $o->getHyphen());
-        self::assertSame('test', $o->getNoHyphenateString());
-        self::assertSame(5, $o->getLeftMin());
-        self::assertSame(5, $o->getRightMin());
-        self::assertSame(5, $o->getMinWordLength());
-        self::assertSame(5, $o->getQuality());
-        self::assertSame('test', $o->getCustomHyphen());
-        self::assertEquals(['test1', 'test2'], $o->getTokenizers());
-        self::assertEquals(['test3', 'test4'], $o->getFilters());
-        self::assertSame('test', $o->getDefaultLocale());
+        $this->assertSame('test', $o->getHyphen());
+        $this->assertSame('test', $o->getNoHyphenateString());
+        $this->assertSame(5, $o->getLeftMin());
+        $this->assertSame(5, $o->getRightMin());
+        $this->assertSame(5, $o->getMinWordLength());
+        $this->assertSame(5, $o->getQuality());
+        $this->assertSame('test', $o->getCustomHyphen());
+        $this->assertEquals(['test1', 'test2'], $o->getTokenizers());
+        $this->assertEquals(['test3', 'test4'], $o->getFilters());
+        $this->assertSame('test', $o->getDefaultLocale());
     }
 
-    public function testDefaultLocale()
+    public function testDefaultLocale(): void
     {
         $o = new Options();
         $this->assertEquals('en_EN', $o->getDefaultLocale());

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,12 +31,10 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Options;
 use Org\Heigl\Hyphenator\Tokenizer as t;
-use Mockery as M;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -47,14 +48,14 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class CustomHyphenationTokenizerTest extends TestCase
+final class CustomHyphenationTokenizerTest extends TestCase
 {
-    public function testTokenizingString()
+    public function testTokenizingString(): void
     {
-        $options = M::mock(Options::class);
-        $options->shouldReceive('getNoHyphenateString')->andReturn('==');
-        $options->shouldReceive('getCustomHyphen')->andReturn('--');
-        $options->shouldReceive('getHyphen')->andReturn('^^');
+        $options = $this->createMock(Options::class);
+        $options->method('getNoHyphenateString')->willReturn('==');
+        $options->method('getCustomHyphen')->willReturn('--');
+        $options->method('getHyphen')->willReturn('^^');
 
 
         $tReg = new t\TokenRegistry();

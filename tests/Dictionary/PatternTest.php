@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,7 +31,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Dictionary;
 
 use Org\Heigl\Hyphenator\Dictionary\Pattern;
@@ -46,9 +48,9 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class PatternTest extends TestCase
+final class PatternTest extends TestCase
 {
-    public function testSettingPattern()
+    public function testSettingPattern(): void
     {
         $p = new Pattern();
 
@@ -72,18 +74,16 @@ class PatternTest extends TestCase
     /**
      * @dataProvider patternCreationProvider
      */
-    public function testPatternCreation($input, $text, $pattern)
+    public function testPatternCreation($input, $text, $pattern): void
     {
         $p = Pattern::factory($input);
         $this->assertEquals($text, $p->getText());
         $this->assertEquals($pattern, $p->getPattern());
     }
 
-    public function patternCreationProvider()
+    public static function patternCreationProvider(): \Iterator
     {
-        return array(
-            array('te8st', 'test','00800'),
-            array('øre5sœnd', 'øresœnd', '00050000'),
-        );
+        yield array('te8st', 'test','00800');
+        yield array('øre5sœnd', 'øresœnd', '00050000');
     }
 }
