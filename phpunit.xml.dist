@@ -16,6 +16,11 @@
       <html outputDirectory="build/phpunit/coverage" lowUpperBound="35" highLowerBound="70"/>
     </report>
   </coverage>
+	<source>
+		<include>
+			<directory suffix=".php">src</directory>
+		</include>
+	</source>
   <testsuites>
     <testsuite name="Org_Heigl_Hyphenator TestSuite">
       <directory>tests/</directory>
