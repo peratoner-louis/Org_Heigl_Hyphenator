@@ -37,6 +37,7 @@ use Org\Heigl\Hyphenator\Tokenizer\Token;
 use Org\Heigl\Hyphenator\Tokenizer\WordToken;
 use Org\Heigl\Hyphenator\Tokenizer\NonWordToken;
 use Org\Heigl\Hyphenator\Tokenizer\WhitespaceToken;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -77,6 +78,7 @@ final class TokenTest extends TestCase
     /**
      * @dataProvider tokenLengthProvider
      */
+    #[DataProvider('tokenLengthProvider')]
     public function testTokenLength($string, $length): void
     {
         $t = new Token($string);
@@ -93,6 +95,7 @@ final class TokenTest extends TestCase
     /**
      * @dataProvider filteredContentProvider
      */
+    #[DataProvider('filteredContentProvider')]
     public function testFilteredContent($value, $expected): void
     {
         $t = new Token($value);

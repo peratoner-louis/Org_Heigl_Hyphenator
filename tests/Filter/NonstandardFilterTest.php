@@ -37,6 +37,7 @@ namespace Org\Heigl\HyphenatorTest\Filter;
 use Org\Heigl\Hyphenator\Filter\NonStandardFilter;
 use Org\Heigl\Hyphenator\Options;
 use Org\Heigl\Hyphenator\Tokenizer as t;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -56,6 +57,7 @@ final class NonStandardFilterTest extends TestCase
     /**
      * @dataProvider filterProvider
      */
+    #[DataProvider('filterProvider')]
     public function testFilter($input, $pattern, $result): void
     {
         $f = new NonStandardFilter();

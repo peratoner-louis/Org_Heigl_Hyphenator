@@ -34,6 +34,7 @@ declare(strict_types=1);
 namespace Org\Heigl\HyphenatorTest\Dictionary;
 
 use Org\Heigl\Hyphenator\Dictionary\Dictionary;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -130,11 +131,9 @@ final class DictionaryTest extends TestCase
 
     /**
      * @dataProvider localeUnificationProvider
-     *
-     * @param $parameter
-     * @param $expected
      */
-    public function testLocaleUnification($parameter, $expected): void
+    #[DataProvider('localeUnificationProvider')]
+    public function testLocaleUnification(string $parameter, string $expected): void
     {
         $obj = new \Org\Heigl\Hyphenator\Dictionary\Dictionary();
         $method = \UnitTestHelper::getMethod($obj, 'unifyLocale');

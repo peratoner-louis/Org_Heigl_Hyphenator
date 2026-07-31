@@ -36,6 +36,7 @@ namespace Org\Heigl\HyphenatorTest;
 
 use Org\Heigl\Hyphenator\Options;
 use Org\Heigl\Hyphenator\Tokenizer\TokenRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 
@@ -145,6 +146,7 @@ final class OptionsTest extends TestCase
     /**
      * @dataProvider settingSomethingElseThanFilterFailsProvider
      */
+    #[DataProvider('settingSomethingElseThanFilterFailsProvider')]
     public function testSettingSomethingElseThanFilterFails($filter): void
     {
         $this->expectException(UnexpectedValueException::class);
@@ -178,6 +180,7 @@ final class OptionsTest extends TestCase
     /**
      * @dataProvider settingSoemthingElseThanTokenizerFailsProvider
      */
+    #[DataProvider('settingSoemthingElseThanTokenizerFailsProvider')]
     public function testSettingSoemthingElseThanTokenizerFails($tokenizer): void
     {
         $this->expectException(UnexpectedValueException::class);

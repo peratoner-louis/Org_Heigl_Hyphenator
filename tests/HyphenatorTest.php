@@ -267,7 +267,7 @@ final class HyphenatorTest extends TestCase
     public function testSettingTokenizers2(): void
     {
         $options = $this->createMock(\Org\Heigl\Hyphenator\Options::class);
-        $options->expects($this->once())
+        $options->expects($this->exactly(2))
             ->method('getTokenizers')
             ->willReturn(array('Whitespace', 'Punctuation'));
 

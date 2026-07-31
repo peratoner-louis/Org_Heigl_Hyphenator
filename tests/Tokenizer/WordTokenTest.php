@@ -35,6 +35,7 @@ namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Hyphenator;
 use Org\Heigl\Hyphenator\Tokenizer\WordToken;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -63,6 +64,7 @@ final class WordTokenTest extends TestCase
     /**
      * @dataProvider patternProvider
      */
+    #[DataProvider('patternProvider')]
     public function testWordTokenGetsCorrectPattern($pattern, $word, $result, $quality): void
     {
         $t = new WordToken($word);

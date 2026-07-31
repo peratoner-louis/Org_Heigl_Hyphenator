@@ -35,6 +35,7 @@ namespace Org\Heigl\HyphenatorTest\Dictionary;
 
 use Org\Heigl\Hyphenator\Dictionary\Pattern;
 use Org\Heigl\Hyphenator\Exception\NoPatternSetException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -74,6 +75,7 @@ final class PatternTest extends TestCase
     /**
      * @dataProvider patternCreationProvider
      */
+    #[DataProvider('patternCreationProvider')]
     public function testPatternCreation($input, $text, $pattern): void
     {
         $p = Pattern::factory($input);
