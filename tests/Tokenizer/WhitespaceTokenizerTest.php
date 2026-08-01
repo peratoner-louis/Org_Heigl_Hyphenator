@@ -51,7 +51,6 @@ final class WhitespaceTokenizerTest extends TestCase
 {
     public function testTokenizingString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Das'))
@@ -67,7 +66,6 @@ final class WhitespaceTokenizerTest extends TestCase
 
     public function testTokenizingUTF8String(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Døs'))
@@ -83,7 +81,6 @@ final class WhitespaceTokenizerTest extends TestCase
 
     public function testTokenizingRegistry(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Das ist'))
@@ -109,7 +106,6 @@ final class WhitespaceTokenizerTest extends TestCase
 
     public function testTokenizingNonBreakingSpaceString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Some'))
@@ -125,7 +121,6 @@ final class WhitespaceTokenizerTest extends TestCase
 
     public function testTokenizingThinNonBreakingSpaceString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Some'))

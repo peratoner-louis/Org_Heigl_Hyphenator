@@ -55,13 +55,12 @@ final class TokenTest extends TestCase
 {
     public function testTokenReturnsCorrectClass(): void
     {
-        new Token('test');
         $tokenA = new WordToken('a');
-        $this->assertEquals('Org\Heigl\Hyphenator\Tokenizer\WordToken', $tokenA->getType());
+        $this->assertEquals(WordToken::class, $tokenA->getType());
         $tokenB = new NonWordToken('a');
-        $this->assertEquals('Org\Heigl\Hyphenator\Tokenizer\NonWordToken', $tokenB->getType());
+        $this->assertEquals(NonWordToken::class, $tokenB->getType());
         $tokenC = new WhitespaceToken('a');
-        $this->assertEquals('Org\Heigl\Hyphenator\Tokenizer\WhitespaceToken', $tokenC->getType());
+        $this->assertEquals(WhitespaceToken::class, $tokenC->getType());
     }
 
     public function testTokenReturnsCorrectValues(): void
@@ -79,7 +78,7 @@ final class TokenTest extends TestCase
      * @dataProvider tokenLengthProvider
      */
     #[DataProvider('tokenLengthProvider')]
-    public function testTokenLength($string, $length): void
+    public function testTokenLength(string $string, int $length): void
     {
         $t = new Token($string);
         $this->assertEquals($length, $t->length());
@@ -96,7 +95,7 @@ final class TokenTest extends TestCase
      * @dataProvider filteredContentProvider
      */
     #[DataProvider('filteredContentProvider')]
-    public function testFilteredContent($value, $expected): void
+    public function testFilteredContent(string $value, string $expected): void
     {
         $t = new Token($value);
         $this->assertEquals($expected, $t->getFilteredContent());

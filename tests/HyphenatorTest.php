@@ -33,6 +33,7 @@ declare(strict_types=1);
  */
 namespace Org\Heigl\HyphenatorTest;
 
+use Org\Heigl\Hyphenator\Autoloader;
 use Org\Heigl\Hyphenator\Dictionary\Dictionary;
 use Org\Heigl\Hyphenator\Dictionary\DictionaryRegistry;
 use Org\Heigl\Hyphenator\Exception\PathNotDirException;
@@ -96,7 +97,7 @@ final class HyphenatorTest extends TestCase
     public function testSettingDictionaries(): void
     {
         $hyphenator = new Hyphenator();
-        $dict = new Dictionary('de');
+        $dict = Dictionary::factory('de');
 
         $this->assertInstanceOf(DictionaryRegistry::class, $hyphenator->getDictionaries());
         $this->assertSame($hyphenator, $hyphenator->addDictionary($dict));
@@ -198,10 +199,11 @@ final class HyphenatorTest extends TestCase
 
     public function testAutoloading(): void
     {
-        $this->assertFalse(Hyphenator::__autoload('stuff'));
-        $this->assertFalse(Hyphenator::__autoload('Org\Heigl\Hyphenator\Filters'));
-        $this->assertFalse(Hyphenator::__autoload('Org\Heigl\Hyphenator\Onlyfortesting'));
-        $this->assertTrue(Hyphenator::__autoload('Org\Heigl\Hyphenator\Anotheronefortesting'));
+        $autoloader = Autoloader::getInstance();
+        $this->assertFalse(($autoloader)('stuff'));
+        $this->assertFalse(($autoloader)('Org\Heigl\Hyphenator\Filters'));
+        $this->assertFalse(($autoloader)('Org\Heigl\Hyphenator\Onlyfortesting'));
+        $this->assertTrue(($autoloader)('Org\Heigl\Hyphenator\Anotheronefortesting'));
     }
 
     public function testRegisteringAutoload(): void
@@ -209,10 +211,10 @@ final class HyphenatorTest extends TestCase
         if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('Autoloading is not tested on HHVM');
         }
-        spl_autoload_unregister(array('Org\Heigl\Hyphenator\Hyphenator', '__autoload'));
-        //$this->assertNotContains(array('Org\Heigl\Hyphenator\Hyphenator', '__autoload'),spl_autoload_functions());
+        spl_autoload_unregister(Autoloader::getInstance());
+        $this->assertNotContains(Autoloader::getInstance(), spl_autoload_functions());
         Hyphenator::registerAutoload();
-        $this->assertContains(array('Org\Heigl\Hyphenator\Hyphenator', '__autoload'), spl_autoload_functions());
+        $this->assertContains(Autoloader::getInstance(), spl_autoload_functions());
     }
 
     public function testHyphenatorInvocationSimple(): void

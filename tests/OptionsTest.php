@@ -34,7 +34,11 @@ declare(strict_types=1);
  */
 namespace Org\Heigl\HyphenatorTest;
 
+use Org\Heigl\Hyphenator\Exception\InvalidArgumentException;
+use Org\Heigl\Hyphenator\Exception\PathNotFoundException;
+use Org\Heigl\Hyphenator\Filter\Filter;
 use Org\Heigl\Hyphenator\Options;
+use Org\Heigl\Hyphenator\Tokenizer\Tokenizer;
 use Org\Heigl\Hyphenator\Tokenizer\TokenRegistry;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -126,10 +130,10 @@ final class OptionsTest extends TestCase
     {
         $o = new Options();
 
-        $filter = new class extends \Org\Heigl\Hyphenator\Filter\Filter {
+        $filter = new class extends Filter {
             public function run(TokenRegistry $tokens)
             {
-                // Do nothing
+                return new TokenRegistry();
             }
 
             protected function doConcatenate(TokenRegistry $tokens)
@@ -145,6 +149,7 @@ final class OptionsTest extends TestCase
 
     /**
      * @dataProvider settingSomethingElseThanFilterFailsProvider
+     * @param mixed $filter
      */
     #[DataProvider('settingSomethingElseThanFilterFailsProvider')]
     public function testSettingSomethingElseThanFilterFails($filter): void
@@ -157,19 +162,20 @@ final class OptionsTest extends TestCase
 
     public static function settingSomethingElseThanFilterFailsProvider(): \Iterator
     {
-        yield array(new \stdClass());
-        yield array(new \Exception());
+        yield [new \stdClass()];
+        yield [new \Exception()];
+        yield [true];
     }
 
     public function testSettingTokenizerInstance(): void
     {
         $o = new Options();
 
-        $tokenizer = new class implements \Org\Heigl\Hyphenator\Tokenizer\Tokenizer {
+        $tokenizer = new class implements Tokenizer {
 
-            public function run($input)
+            public function run($input): TokenRegistry
             {
-                // Do nothing
+                return new TokenRegistry();
             }
         };
 
@@ -179,6 +185,7 @@ final class OptionsTest extends TestCase
     }
     /**
      * @dataProvider settingSoemthingElseThanTokenizerFailsProvider
+     * @param mixed $tokenizer
      */
     #[DataProvider('settingSoemthingElseThanTokenizerFailsProvider')]
     public function testSettingSoemthingElseThanTokenizerFails($tokenizer): void
@@ -191,8 +198,9 @@ final class OptionsTest extends TestCase
 
     public static function settingSoemthingElseThanTokenizerFailsProvider(): \Iterator
     {
-        yield array(new \stdClass());
-        yield array(new \Exception());
+        yield [new \stdClass()];
+        yield [new \Exception()];
+        yield [true];
     }
 
 
@@ -210,24 +218,26 @@ final class OptionsTest extends TestCase
         $this->assertSame(array('filterC','filterD'), $o->getTokenizers());
     }
 
-    public function testCreatingOptionViaFactory(): void
+    public function testCreatingOptionViaFactoryWithNonexistendFileFails(): void
     {
-        try {
-            Options::factory('foo');
-            $this->fail('Foo should not be readable');
-        } catch (\Org\Heigl\Hyphenator\Exception\PathNotFoundException $e) {
-            $this->assertTrue(true);
-        }
-        try {
-            Options::factory(__DIR__ . '/share/unparseable.ini');
-            $this->fail('The given file should not be parseable');
-        } catch (\Org\Heigl\Hyphenator\Exception\InvalidArgumentException $e) {
-            $this->assertTrue(true);
-        }
+        $this->expectException(PathNotFoundException::class);
+
+        Options::factory('foo');
+    }
+
+    public function testCreatingOptionViaFactoryWithUnreadableFileFails(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Options::factory(__DIR__ . '/share/unparseable.ini');
+    }
+
+    public function testCreatingOptionViaFactoryWorks(): void
+    {
         $o = Options::factory(__DIR__ . '/share/onlydist.ini');
-        $this->assertInstanceof('\Org\Heigl\Hyphenator\Options', $o);
+        $this->assertInstanceof(Options::class, $o);
         $o = Options::factory(__DIR__ . '/share/parseable.ini');
-        $this->assertInstanceof('\Org\Heigl\Hyphenator\Options', $o);
+        $this->assertInstanceof(Options::class, $o);
         $this->assertSame('test', $o->getHyphen());
         $this->assertSame('test', $o->getNoHyphenateString());
         $this->assertSame(5, $o->getLeftMin());

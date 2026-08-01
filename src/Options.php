@@ -74,7 +74,7 @@ class Options
      *
      * By default this is 2 characters
      *
-     * @var int $leftmin
+     * @var int $leftMin
      */
     private $leftMin = 2;
 
@@ -83,7 +83,7 @@ class Options
      *
      * By default this is 2 characters
      *
-     * @var int $rightmin
+     * @var int $rightMin
      */
     private $rightMin = 2;
 
@@ -115,16 +115,16 @@ class Options
     /**
      * The filters to be used to postprocess the hyphenations.
      *
-     * @var array $filters
+     * @var array<Filter|string> $filters
      */
     private $filters = array();
 
     /**
      * The tokenizers to use.
      *
-     * @var array $tokenizers
+     * @var array<Tokenizer|string> $tokenizers
      */
-    private $tokenizers = array();
+    private $tokenizers = [];
 
     /**
      * The locale to be used.
@@ -185,7 +185,7 @@ class Options
     /**
      * Set the Minimum left characters
      *
-     * @param int $leftMin Left minimum Chars
+     * @param int|mixed $leftMin Left minimum Chars
      *
      * @return \Org\Heigl\Hyphenator\Options
      */
@@ -209,7 +209,7 @@ class Options
     /**
      * Set the Minimum right characters
      *
-     * @param int $rightMin Right minimum Characters
+     * @param int|mixed $rightMin Right minimum Characters
      *
      * @return \Org\Heigl\Hyphenator\Options
      */
@@ -235,7 +235,7 @@ class Options
      *
      * Words with less characters (not byte!) are not to be hyphenated
      *
-     * @param int $minLength Minimum Word-Length
+     * @param int|mixed $minLength Minimum Word-Length
      *
      * @return \Org\Heigl\Hyphenator\Options
      */
@@ -321,19 +321,27 @@ class Options
     /**
      * Set the filters
      *
-     * @param string|array $filters The filters to use as comma separated list
+     * @param string|string[] $filters The filters to use as comma separated list
      *                              or array
      *
      * @return \Org\Heigl\Hyphenator\Options
      */
-    public function setFilters($filters)
+    public function setFilters(...$filters)
     {
-        $this->filters = array();
-        if (! is_array($filters)) {
-            $filters = explode(',', $filters);
+        $this->filters = [];
+
+        if (count($filters) === 1) {
+            $filters = $filters[0];
         }
+
+        if (! is_array($filters)) {
+            $filters = [$filters];
+        }
+
         foreach ($filters as $filter) {
-            $this->addFilter($filter);
+            foreach (explode(',', $filter) as $filterInstance) {
+                $this->addFilter($filterInstance);
+            }
         }
 
         return $this;
@@ -342,7 +350,7 @@ class Options
     /**
      * Add a filter to the options-array
      *
-     * @param string|Filter $filter The filter to be added
+     * @param Filter|string|mixed $filter The filter to be added
      *
      * @throws \UnexpectedValueException
      * @return \Org\Heigl\Hyphenator\Options
@@ -365,7 +373,7 @@ class Options
     /**
      * Get all the filters
      *
-     * @return array
+     * @return array<Filter|string>
      */
     public function getFilters()
     {
@@ -375,18 +383,27 @@ class Options
     /**
      * Set the tokenizers to use
      *
-     * @param string|array $tokenizers The Tokenizers to use
+     * @param string|string[] $tokenizers The Tokenizers to use
      *
      * @return \Org\Heigl\Hyphenator\Options
      */
-    public function setTokenizers($tokenizers)
+    public function setTokenizers(...$tokenizers)
     {
-        $this->tokenizers = array();
-        if (! is_array($tokenizers)) {
-            $tokenizers = explode(',', $tokenizers);
+        $this->tokenizers = [];
+
+        if (count($tokenizers) === 1) {
+            $tokenizers = $tokenizers[0];
         }
+
+        if (! is_array($tokenizers)) {
+            $tokenizers = [$tokenizers];
+        }
+
         foreach ($tokenizers as $tokenizer) {
-            $this->addTokenizer($tokenizer);
+            $tokenizer = explode(',', $tokenizer);
+            foreach ($tokenizer as $tokenizerInstance) {
+                $this->addTokenizer($tokenizerInstance);
+            }
         }
 
         return $this;
@@ -395,7 +412,7 @@ class Options
     /**
      * Add a tokenizer to the tomeizer-list
      *
-     * @param string|Tokenizer $tokenizer The tokenizer to add
+     * @param Tokenizer|mixed $tokenizer The tokenizer to add
      *
      * @return self
      */
@@ -420,7 +437,7 @@ class Options
     /**
      * Get all the tokenizers
      *
-     * @return array
+     * @return array<Tokenizer|string>
      */
     public function getTokenizers()
     {

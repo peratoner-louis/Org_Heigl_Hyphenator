@@ -63,9 +63,10 @@ final class WordTokenTest extends TestCase
 
     /**
      * @dataProvider patternProvider
+     * @param array<string, string> $pattern
      */
     #[DataProvider('patternProvider')]
-    public function testWordTokenGetsCorrectPattern($pattern, $word, $result, $quality): void
+    public function testWordTokenGetsCorrectPattern(array $pattern, string $word, string $result, int $quality): void
     {
         $t = new WordToken($word);
         $t->addPattern($pattern);

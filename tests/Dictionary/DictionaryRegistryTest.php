@@ -38,7 +38,6 @@ use Iterator;
 use Org\Heigl\Hyphenator\Dictionary\Dictionary;
 use Org\Heigl\Hyphenator\Dictionary\DictionaryRegistry;
 use OutOfBoundsException;
-use PHPUnit\FRamework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**

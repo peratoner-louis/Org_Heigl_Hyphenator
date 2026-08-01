@@ -124,7 +124,6 @@ final class TokenRegistryTest extends TestCase
 
     public function testReplacement(): void
     {
-        new Token('f');
         $wt1 = new WordToken('a');
         $wt2 = new WordToken('b');
         $wt3 = new WordToken('c');

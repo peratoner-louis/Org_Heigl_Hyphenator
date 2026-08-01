@@ -56,10 +56,15 @@ final class NonStandardFilterTest extends TestCase
 {
     /**
      * @dataProvider filterProvider
+     * @param array<string, string> $pattern
+     * @param string[] $result
      */
     #[DataProvider('filterProvider')]
-    public function testFilter($input, $pattern, $result): void
-    {
+    public function testFilter(
+        string $input,
+        array $pattern,
+        array $result
+    ): void {
         $f = new NonStandardFilter();
         $o = new Options();
         $t = new t\WordToken($input);

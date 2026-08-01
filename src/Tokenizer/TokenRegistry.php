@@ -79,7 +79,7 @@ class TokenRegistry implements Iterator, Countable
      * divided into multiple tokens.
      *
      * @param Token   $oldToken  The token to be replaced
-     * @param Token[] $newTokens The array of tokens replacing the old one
+     * @param Token[]|mixed[] $newTokens The array of tokens replacing the old one
      */
     public function replace(Token $oldToken, array $newTokens): self
     {

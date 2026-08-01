@@ -34,6 +34,7 @@ declare(strict_types=1);
 namespace Org\Heigl\HyphenatorTest\Dictionary;
 
 use Org\Heigl\Hyphenator\Dictionary\Dictionary;
+use Org\Heigl\Hyphenator\Exception\PathNotFoundException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -121,12 +122,15 @@ final class DictionaryTest extends TestCase
         $this->assertTrue(file_Exists($dict));
         $this->assertEquals('UTF-8', mb_detect_encoding(file_get_contents($dict)));
         $this->assertEquals(file_get_contents(__DIR__.'/share/de_TE.default.ini'), file_get_contents($dict));
-        try {
-            $dict = Dictionary::parseFile('foobar');
-            $this->fail('This should have raised an exception!');
-        } catch (\Org\Heigl\Hyphenator\Exception\PathNotFoundException $exception) {
-            $this->assertTrue(true);
-        }
+    }
+
+    public function testPAresingNonExistentDicFilesBlowsUp(): void
+    {
+        Dictionary::setFileLocation(__DIR__ . '/share/');
+
+        $this->expectException(PathNotFoundException::class);
+
+        Dictionary::parseFile('foobar');
     }
 
     /**

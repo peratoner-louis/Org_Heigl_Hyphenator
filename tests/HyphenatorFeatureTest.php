@@ -53,10 +53,14 @@ final class HyphenatorFeatureTest extends TestCase
 
     /**
      * @dataProvider hyphenationOfSingleWordWithArrayOutputProvider
+     * @param string[] $expected
      */
     #[DataProvider('hyphenationOfSingleWordWithArrayOutputProvider')]
-    public function testHyphenationOfSingleWordWithArrayOutput($word, $language, $expected): void
-    {
+    public function testHyphenationOfSingleWordWithArrayOutput(
+        string $word,
+        string $language,
+        array $expected
+    ): void {
         $o = new h\Options();
         $o->setHyphen('-')
           ->setDefaultLocale($language)
@@ -92,8 +96,12 @@ final class HyphenatorFeatureTest extends TestCase
      * @dataProvider hyphenationOfSingleWordWithDefaultOutputProvider
      */
     #[DataProvider('hyphenationOfSingleWordWithDefaultOutputProvider')]
-    public function testHyphenationOfSingleWordWithDefaultOutput($word, $language, $expected, $quality = 9): void
-    {
+    public function testHyphenationOfSingleWordWithDefaultOutput(
+        string $word,
+        string $language,
+        string $expected,
+        int $quality = 9
+    ): void {
         $o = new h\Options();
         $o->setHyphen('^')
           ->setDefaultLocale($language)
@@ -136,8 +144,12 @@ final class HyphenatorFeatureTest extends TestCase
      * @dataProvider hyphenationOfHtmlWithDefaultOutputProvider
      */
     #[DataProvider('hyphenationOfHtmlWithDefaultOutputProvider')]
-    public function testHyphenationOfHtmlWithDefaultOutput($html, $language, $expected, $quality = 9): void
-    {
+    public function testHyphenationOfHtmlWithDefaultOutput(
+        string $html,
+        string $language,
+        string $expected,
+        int $quality = 9
+    ): void {
         $o = new h\Options();
         $o->setHyphen('^')
           ->setDefaultLocale($language)

@@ -51,23 +51,30 @@ use PHPUnit\Framework\TestCase;
  */
 final class PatternTest extends TestCase
 {
+    public function testSettingEmptyPatternsThrowsExceptionWhenCallingGetText(): void
+    {
+        $p = new Pattern();
+
+        $this->expectException(NoPatternSetException::class);
+
+        $p->getText();
+    }
+
+    public function testSettingEmptyPatternsThrowsExceptionWhenCallingGetPattern(): void
+    {
+        $p = new Pattern();
+
+        $this->expectException(NoPatternSetException::class);
+
+        $p->getPattern();
+    }
+
     public function testSettingPattern(): void
     {
         $p = new Pattern();
 
-        try {
-            $p->getText();
-            $this->fail('No Exception raised');
-        } catch (NoPatternSetException $e) {
-            $this->assertTrue(true);
-        }
-        try {
-            $p->getPattern();
-            $this->fail('No Exception raised');
-        } catch (NoPatternSetException $e) {
-            $this->assertTrue(true);
-        }
         $this->assertSame($p, $p->setPattern('te8st'));
+
         TestCase::assertSame('test', $p->getText());
         TestCase::assertSame('00800', $p->getPattern());
     }
@@ -76,8 +83,11 @@ final class PatternTest extends TestCase
      * @dataProvider patternCreationProvider
      */
     #[DataProvider('patternCreationProvider')]
-    public function testPatternCreation($input, $text, $pattern): void
-    {
+    public function testPatternCreation(
+        string $input,
+        string $text,
+        string $pattern
+    ): void {
         $p = Pattern::factory($input);
         $this->assertEquals($text, $p->getText());
         $this->assertEquals($pattern, $p->getPattern());

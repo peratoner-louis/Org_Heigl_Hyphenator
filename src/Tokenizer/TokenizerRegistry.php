@@ -56,9 +56,9 @@ class TokenizerRegistry implements Iterator, Countable
     /**
      * Storage for the Tokenizers.
      *
-     * @var Tokenizer[] $_registry
+     * @var Tokenizer[] $registry
      */
-    private $registry = array();
+    private $registry = [];
 
     /**
      * Add an item to the registry

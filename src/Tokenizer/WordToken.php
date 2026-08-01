@@ -53,14 +53,14 @@ class WordToken extends Token
     /**
      * The hyphenation patterns for this token.
      *
-     * @var array $_pattern
+     * @var array<string, string> $pattern
      */
-    protected $pattern = array();
+    protected $pattern = [];
 
     /**
      * Add a substring=>pattern array to the already existing ones
      *
-     * @param array $pattern The new patterns to add
+     * @param array<string, string> $pattern The new patterns to add
      *
      * @return self
      */

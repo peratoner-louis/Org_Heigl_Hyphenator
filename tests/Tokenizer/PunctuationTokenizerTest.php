@@ -51,7 +51,6 @@ final class PunctuationTokenizerTest extends TestCase
 {
     public function testTokenizingString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\PunctuationTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Das'))
@@ -70,7 +69,6 @@ final class PunctuationTokenizerTest extends TestCase
 
     public function testTokenizingRegistry(): void
     {
-        new t\Token('test');
         $tokenizer = new t\PunctuationTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Das(ist'))

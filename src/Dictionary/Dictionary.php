@@ -94,7 +94,7 @@ class Dictionary
         return $dict;
     }
 
-    public static function fromLocale($locale): Dictionary
+    public static function fromLocale(string $locale): Dictionary
     {
         $dictionary = new Dictionary();
         $dictionary->load($locale);
@@ -196,7 +196,7 @@ class Dictionary
      *
      * @param string $word The word to get the patterns for.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function getPatternsForWord($word)
     {

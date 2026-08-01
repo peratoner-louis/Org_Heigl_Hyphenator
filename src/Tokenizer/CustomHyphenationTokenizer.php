@@ -50,7 +50,7 @@ use Org\Heigl\Hyphenator\Options;
  */
 class CustomHyphenationTokenizer implements Tokenizer
 {
-
+    /** @var Options */
     private $options;
 
     public function __construct(Options $options)

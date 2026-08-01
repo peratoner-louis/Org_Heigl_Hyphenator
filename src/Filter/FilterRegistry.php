@@ -162,9 +162,10 @@ class FilterRegistry implements Iterator, Countable
      *
      * @see Iterator::key()
      *
-     * @return mixed
+     * @return int|string
      */
-    public function key(): int
+    #[\ReturnTypeWillChange]
+    public function key()
     {
         $key = key($this->registry);
 

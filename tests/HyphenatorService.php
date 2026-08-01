@@ -15,8 +15,18 @@ use Org\Heigl\Hyphenator\Options;
 
 final class HyphenatorService
 {
+    /**
+     * @var Hyphenator
+     */
+    private $hyphenator;
+
+    /** @var self */
     private static $instance = null;
 
+    /**
+     * @param Hyphenator $hyphenator
+     * @param array<string, string> $customPattern
+     */
     public function __construct(Hyphenator $hyphenator, array $customPattern)
     {
         $o = new Options();
@@ -49,6 +59,10 @@ final class HyphenatorService
         return self::$instance;
     }
 
+    /**
+     * @param string $word
+     * @return mixed[]
+     */
     public function hyphenate(string $word): array
     {
         return $this->hyphenator->hyphenate($word);
