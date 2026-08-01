@@ -65,16 +65,16 @@ class Token
     /**
      * The hyphenated token.
      *
-     * @var array $hyphenatedContent
+     * @var string[] $hyphenatedContent
      */
-    protected $hyphenatedContent = array();
+    protected $hyphenatedContent = [];
 
     /**
      * The hyphenation patterns for this token.
      *
-     * @var array $pattern
+     * @var array<string, string> $pattern
      */
-    protected $pattern = array();
+    protected $pattern = [];
 
     /**
      * Create the Token
@@ -100,7 +100,7 @@ class Token
     /**
      * Set the tokens hyphenated content
      *
-     * @param array $hyphenatedContent all possible hyphenations
+     * @param string[] $hyphenatedContent all possible hyphenations
      *
      * @return Token
      */
@@ -114,7 +114,7 @@ class Token
     /**
      * Get the hyphenated content
      *
-     * @return array
+     * @return string[]
      */
     public function getHyphenatedContent()
     {

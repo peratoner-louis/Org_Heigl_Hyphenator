@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -29,11 +32,9 @@
  * @version   2.0.1
  * @since     02.12.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Filter;
 
-use \Org\Heigl\Hyphenator\Filter\CustomMarkupFilter;
-use \Mockery as M;
+use Org\Heigl\Hyphenator\Filter\CustomMarkupFilter;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -48,24 +49,25 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.12.2011
  */
-class CustomMarkupFilterTest extends TestCase
+final class CustomMarkupFilterTest extends TestCase
 {
-    public function testConcatenation()
+    public function testConcatenation(): void
     {
         $obj = new CustomMarkupFilter();
 
-        $token1 = M::mock('\Org\Heigl\Hyphenator\Tokenizer\Token');
-        $token1->shouldReceive('getFilteredContent')->once()->andReturn('a');
+        $token1 = $this->createMock(\Org\Heigl\Hyphenator\Tokenizer\Token::class);
+        $token1->expects($this->once())
+            ->method('getFilteredContent')
+            ->willReturn('a');
 
-        $token2 = M::mock('\Org\Heigl\Hyphenator\Tokenizer\Token');
-        $token2->shouldReceive('getFilteredContent')->once()->andReturn('b');
+        $token2 = $this->createMock(\Org\Heigl\Hyphenator\Tokenizer\Token::class);
+        $token2->expects($this->once())
+            ->method('getFilteredContent')
+            ->willReturn('b');
 
-        $tokenList = M::mock('\Org\Heigl\Hyphenator\Tokenizer\TokenRegistry');
-        $tokenList->shouldReceive('rewind')->once();
-        $tokenList->shouldReceive('valid')->times(3)->andReturnValues(array(true, true, false));
-        $tokenList->shouldReceive('current')->twice()->andReturnValues(array($token1, $token2));
-        $tokenList->shouldReceive('next')->twice();
-        $tokenList->shouldReceive('key')->andReturnValues(array(0, 1));
+        $tokenList = new \Org\Heigl\Hyphenator\Tokenizer\TokenRegistry();
+        $tokenList->add($token1);
+        $tokenList->add($token2);
 
         $method = \UnitTestHelper::getMethod($obj, 'concatenate');
         $result = $method->invoke($obj, $tokenList);

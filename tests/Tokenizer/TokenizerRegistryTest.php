@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,7 +31,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Tokenizer\TokenizerRegistry;
@@ -46,28 +48,28 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class TokenizerRegistryTest extends TestCase
+final class TokenizerRegistryTest extends TestCase
 {
-    public function testAddingTokenizer()
+    public function testAddingTokenizer(): void
     {
         $t1 = new TestTokenizer();
         $t2 = new Test1Tokenizer();
         $r = new TokenizerRegistry();
-        $this->assertEquals(0, $r->count());
+        $this->assertCount(0, $r);
         $this->assertSame($r, $r->add($t1));
-        $this->assertEquals(1, $r->count());
+        $this->assertCount(1, $r);
         $this->assertSame($t1, $r->getTokenizerWithKey(0));
         $this->assertSame($r, $r->add($t2));
-        $this->assertEquals(2, $r->count());
+        $this->assertCount(2, $r);
         $this->assertSame($t1, $r->getTokenizerWithKey(0));
         $this->assertSame($t2, $r->getTokenizerWithKey(1));
         $this->assertSame($r, $r->cleanup());
-        $this->assertEquals(0, $r->count());
+        $this->assertCount(0, $r);
     }
 
 
 
-    public function testGettingToken()
+    public function testGettingToken(): void
     {
         $t1 = new TestTokenizer();
         $t2 = new Test1Tokenizer();
@@ -75,10 +77,10 @@ class TokenizerRegistryTest extends TestCase
         $r->add($t1);
         $r->add($t2);
         $this->assertSame($t2, $r->getTokenizerWithKey(1));
-        $this->assertNull($r->getTokenizerWithKey(2));
+        $this->assertNotInstanceOf(\Org\Heigl\Hyphenator\Tokenizer\Tokenizer::class, $r->getTokenizerWithKey(2));
     }
 
-    public function testIteratorInterface()
+    public function testIteratorInterface(): void
     {
         $t1 = new TestTokenizer();
         $t2 = new Test1Tokenizer();
@@ -86,11 +88,11 @@ class TokenizerRegistryTest extends TestCase
         $r->add($t1);
         $r->add($t2);
         $r->rewind();
-        $this->assertEquals(0, $r->key());
+        $this->assertSame(0, $r->key());
         $this->assertSame($t1, $r->current());
         $r->next();
         $this->assertTrue($r->valid());
-        $this->assertEquals(1, $r->key());
+        $this->assertSame(1, $r->key());
         $this->assertSame($t2, $r->current());
         $r->next();
         $this->assertFalse($r->valid());
@@ -110,18 +112,18 @@ class TokenizerRegistryTest extends TestCase
         $r->key();
     }
 
-    public function testCountableInterface()
+    public function testCountableInterface(): void
     {
         $t1 = new TestTokenizer();
         $t2 = new Test1Tokenizer();
         $r = new TokenizerRegistry();
         $r->add($t1);
-        $this->assertEquals(1, $r->count());
+        $this->assertCount(1, $r);
         $r->add($t2);
-        $this->assertEquals(2, $r->count());
+        $this->assertCount(2, $r);
     }
 
-    public function testTokenizing()
+    public function testTokenizing(): void
     {
         $t1 = new TestTokenizer();
         $t2 = new Test1Tokenizer();
@@ -133,7 +135,7 @@ class TokenizerRegistryTest extends TestCase
         $this->assertEquals($tr, $r->tokenize('input'));
     }
 
-    public function testTokenizingWithoutTokenizer()
+    public function testTokenizingWithoutTokenizer(): void
     {
         $r = new TokenizerRegistry();
         $tr = $r->tokenize('Teststring with spaces');

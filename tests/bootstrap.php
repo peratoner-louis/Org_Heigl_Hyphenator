@@ -40,11 +40,8 @@ class UnitTestHelper
      * $result = $method->invoke($obj,'param1','param2');
      *
      * @param Object|string $obj
-     * @param string $name
-     *
-     * @return method
      */
-    public static function getMethod($obj, $name)
+    public static function getMethod($obj, string $name): ReflectionMethod
     {
         $class = new ReflectionClass($obj);
         $method = $class->getMethod($name);

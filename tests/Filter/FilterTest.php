@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -29,7 +32,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Filter;
 
 use Org\Heigl\Hyphenator\Options;
@@ -47,14 +49,14 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class FilterTest extends TestCase
+final class FilterTest extends TestCase
 {
-    public function testSettingOptions()
+    public function testSettingOptions(): void
     {
         $t = new Test2Filter();
         $o = new Options();
 
-        self::assertNotSame($o, $t->getOptions());
+        $this->assertNotSame($o, $t->getOptions());
         $this->assertSame($t, $t->setOptions($o));
         $this->assertSame($o, $t->getOptions());
     }

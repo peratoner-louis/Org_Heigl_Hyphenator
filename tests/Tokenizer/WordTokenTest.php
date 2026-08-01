@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,11 +31,11 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Hyphenator;
 use Org\Heigl\Hyphenator\Tokenizer\WordToken;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,9 +49,9 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class WordTokenTest extends TestCase
+final class WordTokenTest extends TestCase
 {
-    public function testWordTokenCanAddPattern()
+    public function testWordTokenCanAddPattern(): void
     {
         $t = new WordToken('test');
         $this->assertEquals('00000', $t->getMergedPattern(Hyphenator::QUALITY_HIGHEST));
@@ -60,59 +63,49 @@ class WordTokenTest extends TestCase
 
     /**
      * @dataProvider patternProvider
+     * @param array<string, string> $pattern
      */
-    public function testWordTokenGetsCorrectPattern($pattern, $word, $result, $quality)
+    #[DataProvider('patternProvider')]
+    public function testWordTokenGetsCorrectPattern(array $pattern, string $word, string $result, int $quality): void
     {
         $t = new WordToken($word);
         $t->addPattern($pattern);
         $this->assertEquals($result, $t->getMergedPattern($quality));
     }
 
-    public function patternProvider()
+    public static function patternProvider(): \Iterator
     {
-        return array(
-            array(
-                array('.t'=>'012','te'=>'743','es'=>'328','st'=>'070','t.'=>'800'),
-                'test',
-                '74380',
-                \Org\Heigl\Hyphenator\Hyphenator::QUALITY_HIGHEST
-            ),
-            //  . t e s t .
-            // 0 1 2
-            //   7 4 3
-            //     3 2 8
-            //       0 7 0
-            //         8 0 0
-            // 0 7 4 3 8 0 0
-            array(
-                array('.t'=>'012','te'=>'743','es'=>'328','st'=>'070','t.'=>'800'),
-                'test',
-                '14300',
-                \Org\Heigl\Hyphenator\Hyphenator::QUALITY_NORMAL
-            ),
-            //  . t e s t .
-            // 0 1 2
-            //   0 4 3
-            //     3 2 0
-            //       0 0 0
-            //         0 0 0
-            // 0 1 4 3 0 0 0
-            array(
-                array('.t'=>'012','tä'=>'743','äß'=>'328','är'=>'070','rø'=>'800','øi'=>'345','i.'=>'100'),
-                'täßtärøi',
-                '743848345',
-                \Org\Heigl\Hyphenator\Hyphenator::QUALITY_HIGHEST
-            ),
-            //  . t ä ß t ä r ø i .
-            // 0 1 2
-            //   7 4 3
-            //     3 2 8
-            //         7 4 3
-            //           0 7 0
-            //             8 0 0
-            //               3 4 5
-            //                 1 0 0
-            // 0 7 4 3 8 4 8 3 4 5 0
+        yield array(
+            array('.t'=>'012','te'=>'743','es'=>'328','st'=>'070','t.'=>'800'),
+            'test',
+            '74380',
+            \Org\Heigl\Hyphenator\Hyphenator::QUALITY_HIGHEST
+        );
+        //  . t e s t .
+        // 0 1 2
+        //   7 4 3
+        //     3 2 8
+        //       0 7 0
+        //         8 0 0
+        // 0 7 4 3 8 0 0
+        yield array(
+            array('.t'=>'012','te'=>'743','es'=>'328','st'=>'070','t.'=>'800'),
+            'test',
+            '14300',
+            \Org\Heigl\Hyphenator\Hyphenator::QUALITY_NORMAL
+        );
+        //  . t e s t .
+        // 0 1 2
+        //   0 4 3
+        //     3 2 0
+        //       0 0 0
+        //         0 0 0
+        // 0 1 4 3 0 0 0
+        yield array(
+            array('.t'=>'012','tä'=>'743','äß'=>'328','är'=>'070','rø'=>'800','øi'=>'345','i.'=>'100'),
+            'täßtärøi',
+            '743848345',
+            \Org\Heigl\Hyphenator\Hyphenator::QUALITY_HIGHEST
         );
     }
 }

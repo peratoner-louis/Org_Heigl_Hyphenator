@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,11 +31,11 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest;
 
 use Org\Heigl\Hyphenator as h;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * This class tests the functionality of the class Org_Heigl_Hyphenator
@@ -45,14 +48,19 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     20.04.2009
  */
-class HyphenatorFeatureTest extends TestCase
+final class HyphenatorFeatureTest extends TestCase
 {
 
     /**
      * @dataProvider hyphenationOfSingleWordWithArrayOutputProvider
+     * @param string[] $expected
      */
-    public function testHyphenationOfSingleWordWithArrayOutput($word, $language, $expected)
-    {
+    #[DataProvider('hyphenationOfSingleWordWithArrayOutputProvider')]
+    public function testHyphenationOfSingleWordWithArrayOutput(
+        string $word,
+        string $language,
+        array $expected
+    ): void {
         $o = new h\Options();
         $o->setHyphen('-')
           ->setDefaultLocale($language)
@@ -67,31 +75,33 @@ class HyphenatorFeatureTest extends TestCase
         $this->assertEquals($expected, $h->hyphenate($word));
     }
 
-    public function hyphenationOfSingleWordWithArrayOutputProvider()
+    public static function hyphenationOfSingleWordWithArrayOutputProvider(): \Iterator
     {
-        return [
+        yield [
+            'donaudampfschifffahrt',
+            'de_DE',
             [
-                'donaudampfschifffahrt',
-                'de_DE',
-                [
-                    'do-naudampfschifffahrt',
-                    'donau-dampfschifffahrt',
-                    'donaudampf-schifffahrt',
-                    'donaudampfschiff-fahrt'
-                ]
-            ],
-//            ['altbaucharme', 'de_DE', array['alt-baucharme', 'altbau-charme']],
-            ['otto', 'de_DE', ['ot-to']],
-
+                'do-naudampfschifffahrt',
+                'donau-dampfschifffahrt',
+                'donaudampf-schifffahrt',
+                'donaudampfschiff-fahrt'
+            ]
         ];
+        //            ['altbaucharme', 'de_DE', array['alt-baucharme', 'altbau-charme']],
+        yield ['otto', 'de_DE', ['ot-to']];
     }
 
 
     /**
      * @dataProvider hyphenationOfSingleWordWithDefaultOutputProvider
      */
-    public function testHyphenationOfSingleWordWithDefaultOutput($word, $language, $expected, $quality = 9)
-    {
+    #[DataProvider('hyphenationOfSingleWordWithDefaultOutputProvider')]
+    public function testHyphenationOfSingleWordWithDefaultOutput(
+        string $word,
+        string $language,
+        string $expected,
+        int $quality = 9
+    ): void {
         $o = new h\Options();
         $o->setHyphen('^')
           ->setDefaultLocale($language)
@@ -112,31 +122,34 @@ class HyphenatorFeatureTest extends TestCase
         $this->assertEquals($expected, $h->hyphenate($word));
     }
 
-    public function hyphenationOfSingleWordWithDefaultOutputProvider()
+    public static function hyphenationOfSingleWordWithDefaultOutputProvider(): \Iterator
     {
-        return [
-            ['donaudampfschifffahrt ', 'de_DE', 'do^nau^dampf^schiff^fahrt '],
-            ['Donaudampfschifffahrt ', 'de_DE', 'Do^nau^dampf^schiff^fahrt '],
-            //['Altbaucharme ', 'de_DE', 'Alt-bau-charme '],
-            ['otto ', 'de_DE', 'ot^to '],
-            ['daniel ', 'de_DE', 'da^ni^el '],
-            // Sturm will not be hyphenated…
-            ['aussichtsturm ', 'de_DE', 'aus^sichts^turm '],
-            // Sturm will be hyphenated…
-            ['aussichtsturm ', 'de_DE', 'aus^sicht^s^turm ', h\Hyphenator::QUALITY_NORMAL],
-            ['urinstinkt ', 'de_DE', 'ur^in^stinkt ', h\Hyphenator::QUALITY_HIGHEST],
-            ['Urinstinkt ', 'de_DE', 'Ur^in^stinkt ', h\Hyphenator::QUALITY_HIGHEST],
-            ['Brücke ', 'de_DE', 'Brü^cke ', h\Hyphenator::QUALITY_NORMAL],
-            ['Röcke ', 'de_DE', 'Rö^cke '],
-            ['Produktionsstrategie ', 'de_DE', 'Pro^duk^ti^ons^stra^te^gie '],
-        ];
+        yield ['donaudampfschifffahrt ', 'de_DE', 'do^nau^dampf^schiff^fahrt '];
+        yield ['Donaudampfschifffahrt ', 'de_DE', 'Do^nau^dampf^schiff^fahrt '];
+        //['Altbaucharme ', 'de_DE', 'Alt-bau-charme '],
+        yield ['otto ', 'de_DE', 'ot^to '];
+        yield ['daniel ', 'de_DE', 'da^ni^el '];
+        // Sturm will not be hyphenated…
+        yield ['aussichtsturm ', 'de_DE', 'aus^sichts^turm '];
+        // Sturm will be hyphenated…
+        yield ['aussichtsturm ', 'de_DE', 'aus^sicht^s^turm ', h\Hyphenator::QUALITY_NORMAL];
+        yield ['urinstinkt ', 'de_DE', 'ur^in^stinkt ', h\Hyphenator::QUALITY_HIGHEST];
+        yield ['Urinstinkt ', 'de_DE', 'Ur^in^stinkt ', h\Hyphenator::QUALITY_HIGHEST];
+        yield ['Brücke ', 'de_DE', 'Brü^cke ', h\Hyphenator::QUALITY_NORMAL];
+        yield ['Röcke ', 'de_DE', 'Rö^cke '];
+        yield ['Produktionsstrategie ', 'de_DE', 'Pro^duk^ti^ons^stra^te^gie '];
     }
 
     /**
      * @dataProvider hyphenationOfHtmlWithDefaultOutputProvider
      */
-    public function testHyphenationOfHtmlWithDefaultOutput($html, $language, $expected, $quality = 9)
-    {
+    #[DataProvider('hyphenationOfHtmlWithDefaultOutputProvider')]
+    public function testHyphenationOfHtmlWithDefaultOutput(
+        string $html,
+        string $language,
+        string $expected,
+        int $quality = 9
+    ): void {
         $o = new h\Options();
         $o->setHyphen('^')
           ->setDefaultLocale($language)
@@ -153,19 +166,17 @@ class HyphenatorFeatureTest extends TestCase
         $this->assertEquals($expected, $h->hyphenate($html));
     }
 
-    public function hyphenationOfHtmlWithDefaultOutputProvider()
+    public static function hyphenationOfHtmlWithDefaultOutputProvider(): \Iterator
     {
-        return [
-            [
-                '<xml>Otto<br/>Aussichtsturm</html>',
-                'de_DE',
-                '<xml>Ot^to<br/>Aus^sicht^s^turm</html>',
-                h\Hyphenator::QUALITY_NORMAL
-            ],
+        yield [
+            '<xml>Otto<br/>Aussichtsturm</html>',
+            'de_DE',
+            '<xml>Ot^to<br/>Aus^sicht^s^turm</html>',
+            h\Hyphenator::QUALITY_NORMAL
         ];
     }
 
-    public function testBaseExample()
+    public function testBaseExample(): void
     {
         $hyphenator = h\Hyphenator::factory('/path/to/the/config/file.properties');
         $hyphenator->getOptions()->setHyphen('-');
@@ -173,7 +184,7 @@ class HyphenatorFeatureTest extends TestCase
         $this->assertEquals('Hy-phe-na-ti-on', $hyphenator->hyphenate('Hyphenation'));
     }
 
-    public function testUserStory1()
+    public function testUserStory1(): void
     {
         $source = 'Selten können vergleichbare Arzneimittel eine Kombination von '
          . 'Fieber, raschem Atmen, Schwitzen, Muskelsteifheit und Benommenheit '
@@ -198,10 +209,10 @@ class HyphenatorFeatureTest extends TestCase
         $h = new h\Hyphenator();
         $h->setOptions($o);
 
-        self::assertEquals($expected, $h->hyphenate($source));
+        $this->assertEquals($expected, $h->hyphenate($source));
     }
 
-    public function testIssue40()
+    public function testIssue40(): void
     {
         $source = 'Wasserwirtschaft';
 
@@ -218,6 +229,6 @@ class HyphenatorFeatureTest extends TestCase
         $h = new h\Hyphenator();
         $h->setOptions($o);
 
-        self::assertEquals($expected, $h->hyphenate($source));
+        $this->assertEquals($expected, $h->hyphenate($source));
     }
 }

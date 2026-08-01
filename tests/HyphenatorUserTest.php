@@ -13,9 +13,9 @@ use Org\Heigl\Hyphenator\Dictionary\Dictionary;
 use Org\Heigl\Hyphenator\Hyphenator;
 use PHPUnit\Framework\TestCase;
 
-class HyphenatorUserTest extends TestCase
+final class HyphenatorUserTest extends TestCase
 {
-    public function testUsingTwoHyphenationPatterns()
+    public function testUsingTwoHyphenationPatterns(): void
     {
         Dictionary::setFileLocation(__DIR__ . '/../src/share/files/dictionaries');
         $hyphenator = Hyphenator::factory();
@@ -29,7 +29,7 @@ class HyphenatorUserTest extends TestCase
         $this->assertEquals('Hand-tuch-spen-der', $hyphenator->hyphenate('Handtuchspender'));
     }
 
-    public function testMultipleHyphenationCallsResultInSameHyphenation()
+    public function testMultipleHyphenationCallsResultInSameHyphenation(): void
     {
         $service = HyphenatorService::singleton();
 

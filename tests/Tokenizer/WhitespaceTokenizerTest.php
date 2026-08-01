@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -28,7 +31,6 @@
  * @version   2.0.1
  * @since     02.11.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Tokenizer;
 
 use Org\Heigl\Hyphenator\Tokenizer as t;
@@ -45,11 +47,10 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.11.2011
  */
-class WhitespaceTokenizerTest extends TestCase
+final class WhitespaceTokenizerTest extends TestCase
 {
-    public function testTokenizingString()
+    public function testTokenizingString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Das'))
@@ -63,9 +64,8 @@ class WhitespaceTokenizerTest extends TestCase
         $this->assertEquals($tReg, $registry);
     }
 
-    public function testTokenizingUTF8String()
+    public function testTokenizingUTF8String(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Døs'))
@@ -79,9 +79,8 @@ class WhitespaceTokenizerTest extends TestCase
         $this->assertEquals($tReg, $registry);
     }
 
-    public function testTokenizingRegistry()
+    public function testTokenizingRegistry(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Das ist'))
@@ -105,9 +104,8 @@ class WhitespaceTokenizerTest extends TestCase
         $this->assertEquals($tReg1, $tokenizer->run($tReg));
     }
 
-    public function testTokenizingNonBreakingSpaceString()
+    public function testTokenizingNonBreakingSpaceString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Some'))
@@ -121,9 +119,8 @@ class WhitespaceTokenizerTest extends TestCase
         $this->assertEquals($tReg, $registry);
     }
 
-    public function testTokenizingThinNonBreakingSpaceString()
+    public function testTokenizingThinNonBreakingSpaceString(): void
     {
-        new t\Token('test');
         $tokenizer = new t\WhitespaceTokenizer();
         $tReg = new t\TokenRegistry();
         $tReg->add(new t\WordToken('Some'))

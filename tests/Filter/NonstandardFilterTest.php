@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2008-2011 Andreas Heigl<andreas@heigl.org>
  *
@@ -29,13 +32,12 @@
  * @version   2.0.1
  * @since     02.12.2011
  */
-
 namespace Org\Heigl\HyphenatorTest\Filter;
 
 use Org\Heigl\Hyphenator\Filter\NonStandardFilter;
 use Org\Heigl\Hyphenator\Options;
 use Org\Heigl\Hyphenator\Tokenizer as t;
-use Mockery as M;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,13 +52,19 @@ use PHPUnit\Framework\TestCase;
  * @version   2.0.1
  * @since     02.12.2011
  */
-class NonStandardFilterTest extends TestCase
+final class NonStandardFilterTest extends TestCase
 {
     /**
      * @dataProvider filterProvider
+     * @param array<string, string> $pattern
+     * @param string[] $result
      */
-    public function testFilter($input, $pattern, $result)
-    {
+    #[DataProvider('filterProvider')]
+    public function testFilter(
+        string $input,
+        array $pattern,
+        array $result
+    ): void {
         $f = new NonStandardFilter();
         $o = new Options();
         $t = new t\WordToken($input);
@@ -69,33 +77,27 @@ class NonStandardFilterTest extends TestCase
         $this->assertEquals($result, $r->getTokenWithKey(0)->getHyphenatedContent());
     }
 
-    public function filterProvider()
+    public static function filterProvider(): \Iterator
     {
-        return array(
+        yield array(
+            'Donaudampfschifffahrt',
             array(
-                'Donaudampfschifffahrt',
-                array(
-                    'auda' => '00100',
-                    'pfsch'=>'001000',
-                    'fff'=>'0010'
-                ),
-                array(
-                    'Donau-dampfschifffahrt',
-                    'Donaudampf-schifffahrt',
-                    'Donaudampfschiff-fahrt'
-                )
+                'auda' => '00100',
+                'pfsch'=>'001000',
+                'fff'=>'0010'
             ),
+            array(
+                'Donau-dampfschifffahrt',
+                'Donaudampf-schifffahrt',
+                'Donaudampfschiff-fahrt'
+            )
         );
     }
 
-    public function testFilterWithNonWordToken()
+    public function testFilterWithNonWordToken(): void
     {
-        $tokenList = M::mock('\Org\Heigl\Hyphenator\Tokenizer\TokenRegistry');
-        $tokenList->shouldReceive('rewind')->once();
-        $tokenList->shouldReceive('valid')->twice()->andReturnValues(array(true, false));
-        $tokenList->shouldReceive('current')->once()->andReturn(new t\Token('foo'));
-        $tokenList->shouldReceive('next')->once();
-        $tokenList->shouldReceive('key')->andReturn(0);
+        $tokenList = new \Org\Heigl\Hyphenator\Tokenizer\TokenRegistry();
+        $tokenList->add(new t\Token('foo'));
 
         $filter = new NonStandardFilter();
         $result = $filter->run($tokenList);
@@ -103,22 +105,13 @@ class NonStandardFilterTest extends TestCase
         $this->assertSame($tokenList, $result);
     }
 
-    public function testConcatenation()
+    public function testConcatenation(): void
     {
         $obj = new NonStandardFilter();
 
-        $token1 = M::mock('\Org\Heigl\Hyphenator\Tokenizer\Token');
-        $token1->shouldReceive('getFilteredContent')->once()->andReturn('a');
-
-        $token2 = M::mock('\Org\Heigl\Hyphenator\Tokenizer\Token');
-        $token2->shouldReceive('getFilteredContent')->once()->andReturn('b');
-
-        $tokenList = M::mock('\Org\Heigl\Hyphenator\Tokenizer\TokenRegistry');
-        $tokenList->shouldReceive('rewind')->once();
-        $tokenList->shouldReceive('valid')->times(3)->andReturnValues(array(true, true, false));
-        $tokenList->shouldReceive('current')->twice()->andReturnValues(array($token1, $token2));
-        $tokenList->shouldReceive('next')->twice();
-        $tokenList->shouldReceive('key')->andReturnValues(array(0, 1));
+        $tokenList = new \Org\Heigl\Hyphenator\Tokenizer\TokenRegistry();
+        $tokenList->add(new t\Token('a'));
+        $tokenList->add(new t\Token('b'));
 
         $method = \UnitTestHelper::getMethod($obj, 'concatenate');
         $result = $method->invoke($obj, $tokenList);

@@ -95,7 +95,7 @@ class DictionaryRegistry implements Iterator, Countable
      *
      * @param string $word The word to get the patterns for.
      *
-     * @return array
+     * @return array<string>
      */
     public function getHyphenationPattterns($word)
     {
@@ -151,9 +151,10 @@ class DictionaryRegistry implements Iterator, Countable
      *
      * @see Iterator::key()
      *
-     * @return mixed
+     * @return string|int
      */
-    public function key(): int
+    #[\ReturnTypeWillChange]
+    public function key()
     {
         $key = key($this->registry);
 

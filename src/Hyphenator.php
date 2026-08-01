@@ -540,38 +540,13 @@ final class Hyphenator
     }
 
     /**
-     * autoload classes.
-     *
-     * @param string $className the name of the class to load
-     *
-     * @return bool
-     */
-    public static function __autoload($className)
-    {
-        if (0 !== strpos($className, 'Org\\Heigl\\Hyphenator')) {
-            return false;
-        }
-        $className = substr($className, strlen('Org\\Heigl\\Hyphenator\\'));
-        $file = str_replace('\\', '/', $className) . '.php';
-        $fileName = __DIR__ . DIRECTORY_SEPARATOR . $file;
-        if (! file_exists(realpath($fileName))) {
-            return false;
-        }
-        if (! @include_once $fileName) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Register this packages autoloader with the autoload-stack
      *
      * @return void
      */
     public static function registerAutoload()
     {
-        spl_autoload_register(array(Hyphenator::class, '__autoload'));
+        spl_autoload_register(Autoloader::getInstance()); // @phpstan-ignore argument.type
     }
 }
 
